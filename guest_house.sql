@@ -111,3 +111,29 @@ WHERE booking_date <= '2016-11-21'
     AND DATE_ADD(booking_date,INTERVAL nights DAY) > '2016-11-21' 
 
 
+-- 11. Have two guests with the same surname ever stayed in the hotel on the evening? Show the last name and both first names. Do not include duplicates
+
+WITH g1 AS 
+    (
+        SELECT b.booking_date,b.nights,g.first_name,g.last_name 
+        FROM booking b 
+            INNER JOIN guest g 
+                ON b.guest_id = g.id
+),
+
+g2 AS 
+    (
+      SELECT b.booking_date,b.nights,g.first_name,g.last_name 
+      FROM booking b 
+            INNER JOIN guest g 
+                ON b.guest_id = g.id    
+)
+
+SELECT DISTINCT g1.last_name, g1.first_name,g2.first_name 
+FROM g1 
+    INNER JOIN g2 
+        ON g1.last_name = g2.last_name
+        AND g1.first_name <> g2.first_name
+WHERE g1.booking_date <= g2.booking_date 
+    AND date_add(g1.booking_date, INTERVAL (g1.nights -1) DAY) >= g2.booking_date   
+ORDER by g1.last_name
