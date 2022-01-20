@@ -135,5 +135,16 @@ FROM g1
         ON g1.last_name = g2.last_name
         AND g1.first_name <> g2.first_name
 WHERE g1.booking_date <= g2.booking_date 
-    AND date_add(g1.booking_date, INTERVAL (g1.nights -1) DAY) >= g2.booking_date   
+    AND DATE_ADD(g1.booking_date, INTERVAL (g1.nights -1) DAY) >= g2.booking_date   
 ORDER by g1.last_name
+
+
+-- 12. The first digit of the room number indicates the floor – e.g. room 201 is on the 2nd floor. For each day of the week beginning 2016-11-14 show how many rooms are being vacated that day by floor number. Show all days in the correct order
+
+SELECT DATE_ADD(booking_date,INTERVAL nights DAY) as i,
+SUM(CASE WHEN room_no like '1%' AND DATE_ADD(booking_date,INTERVAL nights DAY) THEN 1 ELSE 0 END ) as 1st,
+SUM(CASE WHEN room_no like '2%' AND DATE_ADD(booking_date,INTERVAL nights DAY) THEN 1 ELSE 0 END ) as 2nd,
+SUM(CASE WHEN room_no like '3%' AND DATE_ADD(booking_date,INTERVAL nights DAY) THEN 1 ELSE 0 END ) as 3rd
+FROM booking
+WHERE DATE_ADD(booking_date,INTERVAL nights DAY) BETWEEN '2016-11-14' AND '2016-11-20'
+GROUP BY i 
