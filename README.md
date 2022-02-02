@@ -4,15 +4,15 @@ There are three difficulty levels and each level has 5 problems. The difficulty 
 3. Hard
 
 
-
 -- 1. Give the booking_date and the number of nights for guest 1183
 
 ```SQL
 SELECT booking_date, nights 
 FROM booking 
 WHERE guest_id = 1183
+
 ```
--- 2. List the arrival time and the first and last names for all guests due to arrive on 2016-11-05, order the output by time of arrival
+2. List the arrival time and the first and last names for all guests due to arrive on 2016-11-05, order the output by time of arrival
 
 ```SQL
 SELECT b.arrival_time, g.first_name, g.last_name 
@@ -23,7 +23,7 @@ WHERE b.booking_date = '2016-11-05'
 ORDER BY b.arrival_time
 ```
 
--- 3.  Give the daily rate that should be paid for bookings with ids 5152, 5165, 5154 and 5295. Include booking id, room type, number of occupants and the amount 
+3.  Give the daily rate that should be paid for bookings with ids 5152, 5165, 5154 and 5295. Include booking id, room type, number of occupants and the amount 
 
 ```SQL
 SELECT b.booking_id, b.room_type_requested, b.occupants, r.amount
@@ -34,7 +34,7 @@ FROM booking b
 WHERE b.booking_id IN (5152,5165,5154,5295)
 ```
 
--- 4. Find who is staying in room 101 on 2016-12-03, include first name, last name and address
+4. Find who is staying in room 101 on 2016-12-03, include first name, last name and address
 
 ```SQL
 SELECT g.first_name,g.last_name,g.address
@@ -46,7 +46,7 @@ AND b.room_no = 101
 ```
 
 
--- 5. For guests 1185 and 1270 show the number of bookings made and the total number of nights. Your output should include the guest id and the total number of bookings and the total number of nights.
+5. For guests 1185 and 1270 show the number of bookings made and the total number of nights. Your output should include the guest id and the total number of bookings and the total number of nights.
 
 ```SQL
 SELECT g.id, COUNT(b.nights) as total_bookings,SUM(b.nights) as total_nights
@@ -57,7 +57,7 @@ WHERE b.guest_id IN (1185,1270)
 GROUP BY g.id
 ```
 
--- 6. Show the total amount payable by guest Ruth Cadbury for her room bookings. You should JOIN to the rate table using room_type_requested and occupants
+6. Show the total amount payable by guest Ruth Cadbury for her room bookings. You should JOIN to the rate table using room_type_requested and occupants
 
 ```SQL
 SELECT SUM(b.nights * r.amount) as amount_payable
@@ -71,7 +71,7 @@ INNER JOIN guest g
  And g.last_name = 'Cadbury'
 ```
 
- -- 7. Calculate the total bill for booking 5346 including extras
+ 7. Calculate the total bill for booking 5346 including extras
 
 ```SQL
  WITH e AS (
@@ -88,7 +88,7 @@ FROM booking b INNER JOIN rate r
 WHERE b.booking_id = 5346
 ```
 
--- 8. For every guest who has the word “Edinburgh” in their address show the total number of nights booked. Be sure to include 0 for those guests who have never had a booking. Show last name, first name, address and number of nights. Order by last name then first name
+8. For every guest who has the word “Edinburgh” in their address show the total number of nights booked. Be sure to include 0 for those guests who have never had a booking. Show last name, first name, address and number of nights. Order by last name then first name
 
 ```SQL
 SELECT g.last_name,g.first_name, g.address,
@@ -105,7 +105,7 @@ GROUP BY g.last_name,g.first_name,g.address
 ORDER BY g.last_name,g.first_name
 ```
 
--- 9. For each day of the week beginning 2016-11-25 show the number of bookings starting that day. Be sure to show all the days of the week in the correct order
+9. For each day of the week beginning 2016-11-25 show the number of bookings starting that day. Be sure to show all the days of the week in the correct order
 
 ```SQL
 SELECT booking_date, COUNT(booking_id) AS arrivals 
@@ -116,7 +116,7 @@ GROUP BY booking_date
 ORDER BY booking_date 
 ```
 
--- 10. Show the number of guests in the hotel on the night of 2016-11-21. Include all occupants who checked in that day but not those who checked out
+10. Show the number of guests in the hotel on the night of 2016-11-21. Include all occupants who checked in that day but not those who checked out
 
 ```SQL
 SELECT SUM(occupants) 
@@ -125,7 +125,7 @@ WHERE booking_date <= '2016-11-21'
     AND DATE_ADD(booking_date,INTERVAL nights DAY) > '2016-11-21' 
 ```
 
--- 11. Have two guests with the same surname ever stayed in the hotel on the evening? Show the last name and both first names. Do not include duplicates
+11. Have two guests with the same surname ever stayed in the hotel on the evening? Show the last name and both first names. Do not include duplicates
 
 ```SQL
 WITH g1 AS 
@@ -154,7 +154,7 @@ WHERE g1.booking_date <= g2.booking_date
 ORDER by g1.last_name
 ```
 
--- 12. The first digit of the room number indicates the floor – e.g. room 201 is on the 2nd floor. For each day of the week beginning 2016-11-14 show how many rooms are being vacated that day by floor number. Show all days in the correct order
+12. The first digit of the room number indicates the floor – e.g. room 201 is on the 2nd floor. For each day of the week beginning 2016-11-14 show how many rooms are being vacated that day by floor number. Show all days in the correct order
 
 ```SQL
 SELECT DATE_ADD(booking_date,INTERVAL nights DAY) as i,
@@ -164,4 +164,15 @@ SUM(CASE WHEN room_no like '3%' AND DATE_ADD(booking_date,INTERVAL nights DAY) T
 FROM booking
 WHERE DATE_ADD(booking_date,INTERVAL nights DAY) BETWEEN '2016-11-14' AND '2016-11-20'
 GROUP BY i  
+```
+
+13. List the rooms that are free on the day 25th Nov 2016
+
+```SQL
+SELECT id FROM room 
+WHERE id NOT IN (
+        SELECT room_no FROM booking 
+        WHERE booking_date <= '2016-11-25' 
+        AND DATE_ADD(booking_date,INTERVAL nights DAY) > '2016-11-25' 
+)
 ```
