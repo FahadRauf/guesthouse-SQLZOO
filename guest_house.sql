@@ -148,3 +148,13 @@ SUM(CASE WHEN room_no like '3%' AND DATE_ADD(booking_date,INTERVAL nights DAY) T
 FROM booking
 WHERE DATE_ADD(booking_date,INTERVAL nights DAY) BETWEEN '2016-11-14' AND '2016-11-20'
 GROUP BY i 
+
+
+-- 13. List the rooms that are free on the day 25th Nov 2016
+
+SELECT id FROM room 
+WHERE id NOT IN (
+        SELECT room_no FROM booking 
+        WHERE booking_date <= '2016-11-25' 
+        AND DATE_ADD(booking_date,INTERVAL nights DAY) > '2016-11-25' 
+)
